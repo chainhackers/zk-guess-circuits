@@ -27,8 +27,18 @@ bun run build
 # Run tests
 bun test
 
-# Copy artifacts to contracts repo
+# Copy artifacts to contracts repo (requires contracts repo in sibling directory)
 bun run copy-to-contracts
+```
+
+## Repository Structure
+
+This repository should be placed as a sibling to the contracts repository:
+
+```
+parent-directory/
+├── zk-guess-circuits/    # This repository
+└── zk-guess-contracts/   # Contracts repository
 ```
 
 ## Performance
