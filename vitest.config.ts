@@ -6,5 +6,6 @@ export default defineConfig({
     environment: 'node',
     testTimeout: 30000, // 30 seconds for proof generation
     hookTimeout: 30000,
+    watch: false,
   },
 });
