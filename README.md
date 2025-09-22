@@ -25,7 +25,7 @@ bun install
 bun run build
 
 # Run tests
-bun test
+bun run test
 
 # Copy artifacts to contracts repo (requires contracts repo in sibling directory)
 bun run copy-to-contracts
