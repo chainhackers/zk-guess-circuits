@@ -153,4 +153,20 @@ describe("GuessNumber Circuit", () => {
     );
     expect(signals100[1]).toBe("1"); // Correct guess
   });
+
+  it("should include guess in public signals", async () => {
+    const inputs: CircuitInputs = {
+      number: "11",
+      salt: "12345",
+      guess: "20"
+    };
+
+    const { publicSignals } = await generateProof(
+      inputs,
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    );
+
+    expect(publicSignals[2]).toBe(inputs.guess);
+  });
 });
