@@ -69,9 +69,10 @@ async function generateTestProofs() {
   console.log(`    ${solidityProof1.pC[1]}`);
   console.log("];");
   
-  console.log("uint[2] validPubSignals_correct = [");
+  console.log("uint[3] validPubSignals_correct = [");
   console.log(`    uint256(${solidityProof1.pubSignals[0]}),`);
-  console.log(`    ${solidityProof1.pubSignals[1]} // isCorrect`);
+  console.log(`    ${solidityProof1.pubSignals[1]}, // isCorrect`);
+  console.log(`    ${solidityProof1.pubSignals[2]} //guess`);
   console.log("];");
   
   console.log("\n=== PROOF FOR INCORRECT GUESS (50) ===");
@@ -92,9 +93,10 @@ async function generateTestProofs() {
   console.log(`    ${solidityProof2.pC[1]}`);
   console.log("];");
   
-  console.log("uint[2] validPubSignals_incorrect = [");
+  console.log("uint[3] validPubSignals_incorrect = [");
   console.log(`    uint256(${solidityProof2.pubSignals[0]}),`);
-  console.log(`    ${solidityProof2.pubSignals[1]} // isCorrect`);
+  console.log(`    ${solidityProof2.pubSignals[1]}, // isCorrect`);
+  console.log(`    ${solidityProof2.pubSignals[2]} //guess`);
   console.log("];");
 }
 
