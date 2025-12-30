@@ -190,7 +190,7 @@ describe("Vulnerability Fix: Guess Now Public", () => {
 
   it("FIX: guess value is exposed in public signals", async () => {
     const { publicSignals } = await generateProof(
-      { number: "42", salt: "12345", guess: "42" },
+      { number: "42", salt: "12345", guess: "99" },
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
     );
@@ -198,7 +198,7 @@ describe("Vulnerability Fix: Guess Now Public", () => {
     // Circuit now outputs 3 public signals:
     // [0] = commitment, [1] = isCorrect, [2] = guess
     expect(publicSignals.length).toBe(3);
-    expect(publicSignals[2]).toBe("42");
+    expect(publicSignals[2]).toBe("99");
   });
 
   it("FIX: proofs with different guesses have different public signals", async () => {
