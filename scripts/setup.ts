@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { exec } from "child_process";
 import { promisify } from "util";
+import crypto from "node:crypto";
 
 const execAsync = promisify(exec);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -71,15 +72,16 @@ async function setup() {
     await zKey.newZKey(r1csPath, ptauPath, zkey0Path);
     console.log("✓ Initial zkey generated");
     
-    // Add contribution (for dev, using fixed entropy)
+    // Add contribution (for dev)
     const zkeyFinalPath = path.join(generatedDir, "guess_final.zkey");
     console.log("Adding contribution...");
-    
+
+    const entropy = crypto.randomBytes(32).toString("hex");
     await zKey.contribute(
       zkey0Path,
       zkeyFinalPath,
       "Dev contribution",
-      "random_entropy_12345"
+      entropy
     );
     console.log("✓ Contribution added");
     
