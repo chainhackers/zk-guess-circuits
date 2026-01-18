@@ -13,12 +13,12 @@ CONTRACTS_DIR="$CIRCUITS_DIR/../zk-guess-contracts"
 
 # Ensure directories exist
 mkdir -p "$CONTRACTS_DIR/circuits"
-mkdir -p "$CONTRACTS_DIR/src"
+mkdir -p "$CONTRACTS_DIR/src/generated"
 
 # Copy circuit file
 cp "$CIRCUITS_DIR/circuits/guess.circom" "$CONTRACTS_DIR/circuits/guess.circom"
 
 # Copy verifier contract
-cp "$CIRCUITS_DIR/generated/GuessVerifier.sol" "$CONTRACTS_DIR/src/GuessVerifier.sol"
+cp "$CIRCUITS_DIR/generated/GuessVerifier.sol" "$CONTRACTS_DIR/src/generated/GuessVerifier.sol"
 
 echo "✓ Copied artifacts to contracts repo"

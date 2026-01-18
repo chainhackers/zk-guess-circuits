@@ -1,7 +1,5 @@
 import { generateProof, calculateCommitment, getCircuitPaths } from "../test/utils";
 import type { CircuitInputs } from "../test/utils";
-import fs from "fs";
-import path from "path";
 
 async function generateTestProofs() {
   const circuitPaths = getCircuitPaths("guess");
@@ -37,7 +35,20 @@ async function generateTestProofs() {
     circuitPaths.wasmPath,
     circuitPaths.zkeyPath
   );
-  
+
+  const inputs3: CircuitInputs = {
+    number: "42",
+    salt: "123",
+    guess: "99"
+  };
+
+  console.log("\nGenerating proof for incorrect guess (99)...");
+  const { proof: proof3, publicSignals: signals3 } = await generateProof(
+    inputs3,
+    circuitPaths.wasmPath,
+    circuitPaths.zkeyPath
+  );
+
   // Format proofs for Solidity
   const formatProofForSolidity = (proof: any, publicSignals: string[]) => {
     return {
@@ -50,6 +61,7 @@ async function generateTestProofs() {
   
   const solidityProof1 = formatProofForSolidity(proof1, signals1);
   const solidityProof2 = formatProofForSolidity(proof2, signals2);
+  const solidityProof3 = formatProofForSolidity(proof3, signals3);
   
   console.log("\n=== PROOF FOR CORRECT GUESS (42) ===");
   console.log("uint[2] validProofA_correct = [");
@@ -69,9 +81,10 @@ async function generateTestProofs() {
   console.log(`    ${solidityProof1.pC[1]}`);
   console.log("];");
   
-  console.log("uint[2] validPubSignals_correct = [");
+  console.log("uint[3] validPubSignals_correct = [");
   console.log(`    uint256(${solidityProof1.pubSignals[0]}),`);
-  console.log(`    ${solidityProof1.pubSignals[1]} // isCorrect`);
+  console.log(`    ${solidityProof1.pubSignals[1]}, // isCorrect`);
+  console.log(`    ${solidityProof1.pubSignals[2]} //guess`);
   console.log("];");
   
   console.log("\n=== PROOF FOR INCORRECT GUESS (50) ===");
@@ -92,9 +105,34 @@ async function generateTestProofs() {
   console.log(`    ${solidityProof2.pC[1]}`);
   console.log("];");
   
-  console.log("uint[2] validPubSignals_incorrect = [");
+  console.log("uint[3] validPubSignals_incorrect = [");
   console.log(`    uint256(${solidityProof2.pubSignals[0]}),`);
-  console.log(`    ${solidityProof2.pubSignals[1]} // isCorrect`);
+  console.log(`    ${solidityProof2.pubSignals[1]}, // isCorrect`);
+  console.log(`    ${solidityProof2.pubSignals[2]} //guess`);
+  console.log("];");
+
+  console.log("\n=== PROOF FOR INCORRECT GUESS (99) ===");
+  console.log("uint[2] validProofA_incorrect_99 = [");
+  console.log(`    ${solidityProof3.pA[0]},`);
+  console.log(`    ${solidityProof3.pA[1]}`);
+  console.log("];");
+
+  console.log("uint[2][2] validProofB_incorrect_99 = [");
+  console.log(`    [${solidityProof3.pB[0][0]},`);
+  console.log(`     ${solidityProof3.pB[0][1]}],`);
+  console.log(`    [${solidityProof3.pB[1][0]},`);
+  console.log(`     ${solidityProof3.pB[1][1]}]`);
+  console.log("];");
+
+  console.log("uint[2] validProofC_incorrect_99 = [");
+  console.log(`    ${solidityProof3.pC[0]},`);
+  console.log(`    ${solidityProof3.pC[1]}`);
+  console.log("];");
+
+  console.log("uint[3] validPubSignals_incorrect_99 = [");
+  console.log(`    uint256(${solidityProof3.pubSignals[0]}),`);
+  console.log(`    ${solidityProof3.pubSignals[1]}, // isCorrect`);
+  console.log(`    ${solidityProof3.pubSignals[2]} //guess`);
   console.log("];");
 }
 

@@ -4,7 +4,7 @@ import type { CircuitInputs } from "./utils";
 
 describe("GuessNumber Circuit", () => {
   let circuitPaths: ReturnType<typeof getCircuitPaths>;
-  
+
   beforeAll(() => {
     circuitPaths = getCircuitPaths("guess");
   });
@@ -15,17 +15,17 @@ describe("GuessNumber Circuit", () => {
       salt: "12345",
       guess: "50"
     };
-    
+
     const { publicSignals } = await generateProof(
       inputs,
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
     );
-    
+
     // publicSignals[0] is commitment, publicSignals[1] is isCorrect
     const expectedCommitment = await calculateCommitment(42, 12345);
     expect(publicSignals[0]).toBe(expectedCommitment);
-    
+
     // Check isCorrect is 0 (wrong guess)
     expect(publicSignals[1]).toBe("0");
   });
@@ -36,16 +36,16 @@ describe("GuessNumber Circuit", () => {
       salt: "12345",
       guess: "42"
     };
-    
+
     const { publicSignals } = await generateProof(
       inputs,
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
     );
-    
+
     // Check isCorrect is 1 (correct guess)
     expect(publicSignals[1]).toBe("1");
-    
+
     // Commitment should still be the same
     const expectedCommitment = await calculateCommitment(42, 12345);
     expect(publicSignals[0]).toBe(expectedCommitment);
@@ -57,19 +57,19 @@ describe("GuessNumber Circuit", () => {
       salt: "12345",
       guess: "42"
     };
-    
+
     const { proof, publicSignals } = await generateProof(
       inputs,
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
     );
-    
+
     const isValid = await verifyProof(
       proof,
       publicSignals,
       circuitPaths.vKeyPath
     );
-    
+
     expect(isValid).toBe(true);
   });
 
@@ -79,28 +79,28 @@ describe("GuessNumber Circuit", () => {
       salt: "12345",
       guess: "42"
     };
-    
+
     const inputs2: CircuitInputs = {
       number: "42",
       salt: "54321",
       guess: "42"
     };
-    
+
     const { publicSignals: signals1 } = await generateProof(
       inputs1,
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
     );
-    
+
     const { publicSignals: signals2 } = await generateProof(
       inputs2,
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
     );
-    
+
     // Same number, different salt = different commitment
     expect(signals1[0]).not.toBe(signals2[0]);
-    
+
     // Both should be correct guesses
     expect(signals1[1]).toBe("1");
     expect(signals2[1]).toBe("1");
@@ -152,5 +152,23 @@ describe("GuessNumber Circuit", () => {
       circuitPaths.zkeyPath
     );
     expect(signals100[1]).toBe("1"); // Correct guess
+  });
+
+  // Proofs must be distinguishable by public signals so the contract knows which proof is for which guess
+  it("should produce different public signals for different guesses", async () => {
+    const proofA = await generateProof(
+      { number: "42", salt: "12345", guess: "42" },
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    );
+
+    const proofB = await generateProof(
+      { number: "42", salt: "12345", guess: "99" },
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    );
+
+    expect(proofA.proof).not.toEqual(proofB.proof);
+    expect(proofA.publicSignals).not.toEqual(proofB.publicSignals);
   });
 });
