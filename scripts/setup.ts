@@ -28,7 +28,7 @@ async function downloadPtau() {
     for (const url of urls) {
       try {
         console.log(`Trying ${url}...`);
-        await execAsync(`curl -L ${url} -o ${ptauPath}`);
+        await execAsync(`curl -L "${url}" -o "${ptauPath}"`);
         // Check if file is valid (should be > 1MB)
         const stats = await fs.stat(ptauPath);
         if (stats.size > 1000000) {

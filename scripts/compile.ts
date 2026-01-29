@@ -18,7 +18,7 @@ async function compile() {
   
   try {
     // Compile circuit
-    const compileCmd = `npx circom2 ${circuitPath} --r1cs --wasm --sym -o ${outputDir}`;
+    const compileCmd = `npx circom2 "${circuitPath}" --r1cs --wasm --sym -o "${outputDir}"`;
     console.log(`Running: ${compileCmd}`);
     
     const { stdout, stderr } = await execAsync(compileCmd);
