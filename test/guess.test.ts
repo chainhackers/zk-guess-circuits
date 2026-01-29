@@ -106,7 +106,7 @@ describe("GuessNumber Circuit", () => {
     expect(signals2[1]).toBe("1");
   });
 
-  it("should enforce range constraints (1-100)", async () => {
+  it("should enforce range constraints (1-65535)", async () => {
     // Test number = 0 (should fail)
     await expect(generateProof(
       {
@@ -118,12 +118,12 @@ describe("GuessNumber Circuit", () => {
       circuitPaths.zkeyPath
     )).rejects.toThrow();
 
-    // Test number = 101 (should fail)
+    // Test number = 65536 (should fail)
     await expect(generateProof(
       {
-        number: "101",
+        number: "65536",
         salt: "12345",
-        guess: "101"
+        guess: "65536"
       },
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
@@ -141,17 +141,17 @@ describe("GuessNumber Circuit", () => {
     );
     expect(signals1[1]).toBe("1"); // Correct guess
 
-    // Test number = 100 (should pass)
-    const { publicSignals: signals100 } = await generateProof(
+    // Test number = 65535 (should pass)
+    const { publicSignals: signals65535 } = await generateProof(
       {
-        number: "100",
+        number: "65535",
         salt: "12345",
-        guess: "100"
+        guess: "65535"
       },
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
     );
-    expect(signals100[1]).toBe("1"); // Correct guess
+    expect(signals65535[1]).toBe("1"); // Correct guess
   });
 
   // Proofs must be distinguishable by public signals so the contract knows which proof is for which guess

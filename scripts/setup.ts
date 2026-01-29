@@ -100,7 +100,8 @@ async function setup() {
     console.log("\n✅ Setup complete!");
     console.log(`  - Final zkey: ${zkeyFinalPath}`);
     console.log(`  - Verification key: ${vKeyPath}`);
-    
+
+    process.exit(0);
   } catch (error) {
     console.error("Setup failed:", (error as Error).message);
     process.exit(1);
