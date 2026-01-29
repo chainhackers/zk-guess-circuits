@@ -13,7 +13,8 @@ describe("GuessNumber Circuit", () => {
     const inputs: CircuitInputs = {
       number: "42",
       salt: "12345",
-      guess: "50"
+      guess: "50",
+      maxNumber: "100"
     };
 
     const { publicSignals } = await generateProof(
@@ -34,7 +35,8 @@ describe("GuessNumber Circuit", () => {
     const inputs: CircuitInputs = {
       number: "42",
       salt: "12345",
-      guess: "42"
+      guess: "42",
+      maxNumber: "100"
     };
 
     const { publicSignals } = await generateProof(
@@ -55,7 +57,8 @@ describe("GuessNumber Circuit", () => {
     const inputs: CircuitInputs = {
       number: "42",
       salt: "12345",
-      guess: "42"
+      guess: "42",
+      maxNumber: "100"
     };
 
     const { proof, publicSignals } = await generateProof(
@@ -77,13 +80,15 @@ describe("GuessNumber Circuit", () => {
     const inputs1: CircuitInputs = {
       number: "42",
       salt: "12345",
-      guess: "42"
+      guess: "42",
+      maxNumber: "100"
     };
 
     const inputs2: CircuitInputs = {
       number: "42",
       salt: "54321",
-      guess: "42"
+      guess: "42",
+      maxNumber: "100"
     };
 
     const { publicSignals: signals1 } = await generateProof(
@@ -106,24 +111,14 @@ describe("GuessNumber Circuit", () => {
     expect(signals2[1]).toBe("1");
   });
 
-  it("should enforce range constraints (1-65535)", async () => {
+  it("should enforce number >= 1", async () => {
     // Test number = 0 (should fail)
     await expect(generateProof(
       {
         number: "0",
         salt: "12345",
-        guess: "0"
-      },
-      circuitPaths.wasmPath,
-      circuitPaths.zkeyPath
-    )).rejects.toThrow();
-
-    // Test number = 65536 (should fail)
-    await expect(generateProof(
-      {
-        number: "65536",
-        salt: "12345",
-        guess: "65536"
+        guess: "0",
+        maxNumber: "100"
       },
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
@@ -134,41 +129,110 @@ describe("GuessNumber Circuit", () => {
       {
         number: "1",
         salt: "12345",
-        guess: "1"
+        guess: "1",
+        maxNumber: "100"
       },
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
     );
     expect(signals1[1]).toBe("1"); // Correct guess
+  });
 
-    // Test number = 65535 (should pass)
-    const { publicSignals: signals65535 } = await generateProof(
+  it("should enforce number <= maxNumber", async () => {
+    // Test number > maxNumber (should fail)
+    await expect(generateProof(
       {
-        number: "65535",
+        number: "101",
         salt: "12345",
-        guess: "65535"
+        guess: "101",
+        maxNumber: "100"
+      },
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    )).rejects.toThrow();
+
+    // Test number = maxNumber (should pass)
+    const { publicSignals } = await generateProof(
+      {
+        number: "100",
+        salt: "12345",
+        guess: "100",
+        maxNumber: "100"
       },
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
     );
-    expect(signals65535[1]).toBe("1"); // Correct guess
+    expect(publicSignals[1]).toBe("1"); // Correct guess
+  });
+
+  it("should enforce maxNumber <= 65535", async () => {
+    // Test maxNumber > 65535 (should fail)
+    await expect(generateProof(
+      {
+        number: "100",
+        salt: "12345",
+        guess: "100",
+        maxNumber: "65536"
+      },
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    )).rejects.toThrow();
+
+    // Test maxNumber = 65535 (should pass)
+    const { publicSignals } = await generateProof(
+      {
+        number: "65535",
+        salt: "12345",
+        guess: "65535",
+        maxNumber: "65535"
+      },
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    );
+    expect(publicSignals[1]).toBe("1"); // Correct guess
+  });
+
+  it("should enforce maxNumber >= 1", async () => {
+    // Test maxNumber = 0 (should fail)
+    await expect(generateProof(
+      {
+        number: "1",
+        salt: "12345",
+        guess: "1",
+        maxNumber: "0"
+      },
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    )).rejects.toThrow();
   });
 
   // Proofs must be distinguishable by public signals so the contract knows which proof is for which guess
   it("should produce different public signals for different guesses", async () => {
     const proofA = await generateProof(
-      { number: "42", salt: "12345", guess: "42" },
+      { number: "42", salt: "12345", guess: "42", maxNumber: "100" },
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
     );
 
     const proofB = await generateProof(
-      { number: "42", salt: "12345", guess: "99" },
+      { number: "42", salt: "12345", guess: "99", maxNumber: "100" },
       circuitPaths.wasmPath,
       circuitPaths.zkeyPath
     );
 
     expect(proofA.proof).not.toEqual(proofB.proof);
     expect(proofA.publicSignals).not.toEqual(proofB.publicSignals);
+  });
+
+  it("should include maxNumber in public signals", async () => {
+    const { publicSignals } = await generateProof(
+      { number: "42", salt: "12345", guess: "42", maxNumber: "100" },
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    );
+
+    // Public signals: [commitment, isCorrect, guess, maxNumber]
+    expect(publicSignals[2]).toBe("42"); // guess
+    expect(publicSignals[3]).toBe("100"); // maxNumber
   });
 });
