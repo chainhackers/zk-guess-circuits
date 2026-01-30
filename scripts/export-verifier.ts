@@ -34,7 +34,8 @@ async function exportVerifier() {
     // Read and display contract size
     const stats = await fs.stat(verifierPath);
     console.log(`  - Size: ${(stats.size / 1024).toFixed(2)} KB`);
-    
+
+    process.exit(0);
   } catch (error) {
     console.error("Failed to export verifier:", (error as Error).message);
     process.exit(1);

@@ -9,6 +9,7 @@ export interface CircuitInputs {
   number: string;
   salt: string;
   guess: string;
+  maxNumber: string;
 }
 
 export interface ProofResult {

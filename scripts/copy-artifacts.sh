@@ -21,4 +21,8 @@ cp "$CIRCUITS_DIR/circuits/guess.circom" "$CONTRACTS_DIR/circuits/guess.circom"
 # Copy verifier contract
 cp "$CIRCUITS_DIR/generated/GuessVerifier.sol" "$CONTRACTS_DIR/src/generated/GuessVerifier.sol"
 
+# Copy wasm and zkey for FFI proof generation in tests
+cp "$CIRCUITS_DIR/generated/guess_js/guess.wasm" "$CONTRACTS_DIR/circuits/guess.wasm"
+cp "$CIRCUITS_DIR/generated/guess_final.zkey" "$CONTRACTS_DIR/circuits/guess_final.zkey"
+
 echo "✓ Copied artifacts to contracts repo"

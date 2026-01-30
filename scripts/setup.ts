@@ -28,7 +28,7 @@ async function downloadPtau() {
     for (const url of urls) {
       try {
         console.log(`Trying ${url}...`);
-        await execAsync(`curl -L ${url} -o ${ptauPath}`);
+        await execAsync(`curl -L "${url}" -o "${ptauPath}"`);
         // Check if file is valid (should be > 1MB)
         const stats = await fs.stat(ptauPath);
         if (stats.size > 1000000) {
@@ -100,7 +100,8 @@ async function setup() {
     console.log("\n✅ Setup complete!");
     console.log(`  - Final zkey: ${zkeyFinalPath}`);
     console.log(`  - Verification key: ${vKeyPath}`);
-    
+
+    process.exit(0);
   } catch (error) {
     console.error("Setup failed:", (error as Error).message);
     process.exit(1);
