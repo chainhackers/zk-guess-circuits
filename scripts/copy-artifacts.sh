@@ -25,7 +25,7 @@ cp "$CIRCUITS_DIR/generated/guess_dev.zkey" "$CONTRACTS_DIR/circuits/guess_dev.z
 
 SRC_SHA="$(git -C "$CIRCUITS_DIR" rev-parse HEAD)"
 SRC_DESCRIBE="$(git -C "$CIRCUITS_DIR" describe --always --dirty)"
-TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+TIMESTAMP="$(LC_ALL=C date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 cat > "$CONTRACTS_DIR/circuits/BUILD_INFO.txt" <<EOF
 BUILD=dev
