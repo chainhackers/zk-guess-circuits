@@ -235,4 +235,40 @@ describe("GuessNumber Circuit", () => {
     expect(publicSignals[2]).toBe("42"); // guess
     expect(publicSignals[3]).toBe("100"); // maxNumber
   });
+
+  it("should enforce guess >= 1", async () => {
+    // guess = 0 is below range
+    await expect(generateProof(
+      { number: "42", salt: "12345", guess: "0", maxNumber: "100" },
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    )).rejects.toThrow();
+
+    // guess = 1 (edge) succeeds
+    const { publicSignals } = await generateProof(
+      { number: "42", salt: "12345", guess: "1", maxNumber: "100" },
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    );
+    expect(publicSignals[1]).toBe("0"); // wrong guess, but in-range
+    expect(publicSignals[2]).toBe("1");
+  });
+
+  it("should enforce guess <= maxNumber", async () => {
+    // guess = 101 exceeds maxNumber = 100
+    await expect(generateProof(
+      { number: "42", salt: "12345", guess: "101", maxNumber: "100" },
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    )).rejects.toThrow();
+
+    // guess = maxNumber (edge) succeeds
+    const { publicSignals } = await generateProof(
+      { number: "42", salt: "12345", guess: "100", maxNumber: "100" },
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    );
+    expect(publicSignals[1]).toBe("0"); // 100 != 42
+    expect(publicSignals[2]).toBe("100");
+  });
 });

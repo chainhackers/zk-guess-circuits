@@ -36,7 +36,20 @@ template GuessNumber() {
     maxGeq1.in[0] <== maxNumber;
     maxGeq1.in[1] <== 1;
     maxGeq1.out === 1;
-    
+
+    // Range-check guess: 1 <= guess <= maxNumber
+    // Symmetric with the constraints on `number` so the proof layer, not the UI,
+    // guarantees well-formed guesses.
+    component guessGeq1 = GreaterEqThan(16);
+    guessGeq1.in[0] <== guess;
+    guessGeq1.in[1] <== 1;
+    guessGeq1.out === 1;
+
+    component guessLeqMax = LessEqThan(16);
+    guessLeqMax.in[0] <== guess;
+    guessLeqMax.in[1] <== maxNumber;
+    guessLeqMax.out === 1;
+
     // Generate commitment using Poseidon hash
     component hasher = Poseidon(2);
     hasher.inputs[0] <== number;
