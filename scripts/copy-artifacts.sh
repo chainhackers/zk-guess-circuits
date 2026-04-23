@@ -18,6 +18,10 @@ CONTRACTS_DIR="$CIRCUITS_DIR/../zk-guess-contracts"
 mkdir -p "$CONTRACTS_DIR/circuits"
 mkdir -p "$CONTRACTS_DIR/src/generated"
 
+# Regenerate the Solidity verifier from the current dev zkey so we never ship
+# a GuessVerifier.sol that drifted from the zkey sitting next to it.
+(cd "$CIRCUITS_DIR" && bun run export-verifier)
+
 cp "$CIRCUITS_DIR/circuits/guess.circom" "$CONTRACTS_DIR/circuits/guess.circom"
 cp "$CIRCUITS_DIR/generated/GuessVerifier.sol" "$CONTRACTS_DIR/src/generated/GuessVerifier.sol"
 cp "$CIRCUITS_DIR/generated/guess_js/guess.wasm" "$CONTRACTS_DIR/circuits/guess.wasm"

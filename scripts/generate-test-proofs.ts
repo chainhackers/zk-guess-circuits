@@ -4,8 +4,8 @@
 import { generateProof, calculateCommitment, getCircuitPaths } from "../test/utils";
 import type { CircuitInputs } from "../test/utils";
 
-// Test address (0x1234567890123456789012345678901234567890)
-const ALICE = "104134845626036279338909600961366137424362805893520";
+// Test address 0x1234567890123456789012345678901234567890 as a decimal uint160.
+const ALICE = BigInt("0x1234567890123456789012345678901234567890").toString();
 
 interface Scenario {
   label: string;

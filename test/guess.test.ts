@@ -4,11 +4,10 @@ import type { CircuitInputs } from "./utils";
 import { buildPoseidon } from "circomlibjs";
 import { DOMAIN_TAG } from "../src/constants";
 
-// Test addresses as decimal uint160 strings.
-// ALICE = 0x1234567890123456789012345678901234567890
-// BOB   = 0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-const ALICE = "104134845626036279338909600961366137424362805893520";
-const BOB = "974334424887268612135789888477522013103955028650";
+// Test addresses as decimal uint160 strings. Derived from hex literals at
+// module load so the decimal can never drift from the address.
+const ALICE = BigInt("0x1234567890123456789012345678901234567890").toString();
+const BOB = BigInt("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").toString();
 
 describe("GuessNumber Circuit", () => {
   let circuitPaths: ReturnType<typeof getCircuitPaths>;
