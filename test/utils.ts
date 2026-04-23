@@ -10,6 +10,7 @@ export interface CircuitInputs {
   salt: string;
   guess: string;
   maxNumber: string;
+  puzzleId: string;
 }
 
 export interface ProofResult {

@@ -8,9 +8,15 @@ template GuessNumber() {
     signal input salt;
     signal input guess;
     signal input maxNumber; // Creator-defined max (1-65535)
+    signal input puzzleId;  // Binds the proof to a specific puzzle
 
     signal output commitment;
     signal output isCorrect;
+
+    // Force puzzleId into the constraint system so a valid proof for puzzle A
+    // cannot be replayed on puzzle B (even if both share the same commitment).
+    signal puzzleIdSquared;
+    puzzleIdSquared <== puzzleId * puzzleId;
 
     // Range constraints: ensure number is between 1 and maxNumber
     // Check number >= 1
@@ -63,4 +69,4 @@ template GuessNumber() {
     isCorrect <== eq.out;
 }
 
-component main {public [guess, maxNumber]} = GuessNumber();
+component main {public [guess, maxNumber, puzzleId]} = GuessNumber();
