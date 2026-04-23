@@ -54,8 +54,8 @@ export function getCircuitPaths(circuitName: string) {
   const base = path.join(__dirname, "..", "generated");
   return {
     wasmPath: path.join(base, `${circuitName}_js`, `${circuitName}.wasm`),
-    zkeyPath: path.join(base, `${circuitName}_final.zkey`),
-    vKeyPath: path.join(base, `${circuitName}_verification_key.json`),
+    zkeyPath: path.join(base, `${circuitName}_dev.zkey`),
+    vKeyPath: path.join(base, `${circuitName}_dev_verification_key.json`),
     r1csPath: path.join(base, `${circuitName}.r1cs`),
   };
 }
