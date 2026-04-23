@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeAll } from "vitest";
-import { generateProof, verifyProof, calculateCommitment, getCircuitPaths } from "./utils";
+import { generateProof, verifyProof, calculateCommitment, calculateCommitmentV1, getCircuitPaths } from "./utils";
 import type { CircuitInputs } from "./utils";
+import { buildPoseidon } from "circomlibjs";
+import { DOMAIN_TAG } from "../src/constants";
 
 describe("GuessNumber Circuit", () => {
   let circuitPaths: ReturnType<typeof getCircuitPaths>;
@@ -235,6 +237,31 @@ describe("GuessNumber Circuit", () => {
     expect(publicSignals[2]).toBe("42"); // guess
     expect(publicSignals[3]).toBe("100"); // maxNumber
     expect(publicSignals[4]).toBe("7"); // puzzleId
+  });
+
+  it("should domain-separate commitments from v1 (Poseidon(2))", async () => {
+    const { publicSignals } = await generateProof(
+      { number: "42", salt: "12345", guess: "42", maxNumber: "100", puzzleId: "7" },
+      circuitPaths.wasmPath,
+      circuitPaths.zkeyPath
+    );
+
+    const v2 = await calculateCommitment(42, 12345);
+    const v1 = await calculateCommitmentV1(42, 12345);
+
+    // Circuit produces the v2 commitment
+    expect(publicSignals[0]).toBe(v2);
+    // v1 commitment for the same (number, salt) is different from v2
+    expect(v1).not.toBe(v2);
+  });
+
+  it("should produce different commitments under different DOMAIN_TAGs", async () => {
+    const poseidon = await buildPoseidon();
+    const F = poseidon.F;
+    const withV2Tag = F.toString(poseidon([DOMAIN_TAG, 42n, 12345n]));
+    const withV3Tag = F.toString(poseidon([DOMAIN_TAG + 1n, 42n, 12345n]));
+
+    expect(withV2Tag).not.toBe(withV3Tag);
   });
 
   it("should reject a proof rebound to a different puzzleId", async () => {

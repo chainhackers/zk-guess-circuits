@@ -4,6 +4,11 @@ include "../node_modules/circomlib/circuits/poseidon.circom";
 include "../node_modules/circomlib/circuits/comparators.circom";
 
 template GuessNumber() {
+    // keccak256("zkguess.v2") mod p(BN254). Domain-separates v2 commitments
+    // from v1 Poseidon(2) commitments and from any future version. Must stay
+    // in sync with DOMAIN_TAG in src/constants.ts.
+    var DOMAIN_TAG = 6000605569458108169701754207643449997818461959397281845176039583157698733685;
+
     signal input number;
     signal input salt;
     signal input guess;
@@ -56,10 +61,11 @@ template GuessNumber() {
     guessLeqMax.in[1] <== maxNumber;
     guessLeqMax.out === 1;
 
-    // Generate commitment using Poseidon hash
-    component hasher = Poseidon(2);
-    hasher.inputs[0] <== number;
-    hasher.inputs[1] <== salt;
+    // Generate commitment using domain-separated Poseidon hash
+    component hasher = Poseidon(3);
+    hasher.inputs[0] <== DOMAIN_TAG;
+    hasher.inputs[1] <== number;
+    hasher.inputs[2] <== salt;
     commitment <== hasher.out;
     
     // Check if guess matches number

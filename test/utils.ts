@@ -2,6 +2,7 @@ import { groth16 } from "snarkjs";
 import { buildPoseidon } from "circomlibjs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { DOMAIN_TAG } from "../src/constants";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -44,7 +45,16 @@ export async function verifyProof(
   return await groth16.verify(vKey, publicSignals, proof);
 }
 
-export async function calculateCommitment(number: number, salt: number): Promise<string> {
+export async function calculateCommitment(number: number | bigint, salt: number | bigint): Promise<string> {
+  const poseidon = await buildPoseidon();
+  const F = poseidon.F;
+  const hash = poseidon([DOMAIN_TAG, number, salt]);
+  return F.toString(hash);
+}
+
+// v1 commitment (Poseidon(2) without domain separation). Retained for regression tests
+// that assert v1 commitments cannot be reused under the v2 circuit.
+export async function calculateCommitmentV1(number: number | bigint, salt: number | bigint): Promise<string> {
   const poseidon = await buildPoseidon();
   const F = poseidon.F;
   const hash = poseidon([number, salt]);
