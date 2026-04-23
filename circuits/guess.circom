@@ -14,14 +14,18 @@ template GuessNumber() {
     signal input guess;
     signal input maxNumber; // Creator-defined max (1-65535)
     signal input puzzleId;  // Binds the proof to a specific puzzle
+    signal input guesser;   // Binds the proof to a specific Ethereum address (uint160)
 
     signal output commitment;
     signal output isCorrect;
 
-    // Force puzzleId into the constraint system so a valid proof for puzzle A
-    // cannot be replayed on puzzle B (even if both share the same commitment).
+    // Force puzzleId and guesser into the constraint system so the proof cannot
+    // be replayed on another puzzle or front-run under a different msg.sender
+    // even if the witness would otherwise be identical.
     signal puzzleIdSquared;
     puzzleIdSquared <== puzzleId * puzzleId;
+    signal guesserSquared;
+    guesserSquared <== guesser * guesser;
 
     // Range constraints: ensure number is between 1 and maxNumber
     // Check number >= 1
@@ -75,4 +79,4 @@ template GuessNumber() {
     isCorrect <== eq.out;
 }
 
-component main {public [guess, maxNumber, puzzleId]} = GuessNumber();
+component main {public [guess, maxNumber, puzzleId, guesser]} = GuessNumber();

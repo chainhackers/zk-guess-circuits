@@ -12,6 +12,7 @@ export interface CircuitInputs {
   guess: string;
   maxNumber: string;
   puzzleId: string;
+  guesser: string; // uint160 (Ethereum address as decimal bigint string)
 }
 
 export interface ProofResult {
