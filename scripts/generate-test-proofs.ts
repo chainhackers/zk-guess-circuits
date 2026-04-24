@@ -3,9 +3,7 @@
 //   [commitment, isCorrect, guess, maxNumber, puzzleId, guesser]
 import { generateProof, calculateCommitment, getCircuitPaths } from "../test/utils";
 import type { CircuitInputs } from "../test/utils";
-
-// Test address 0x1234567890123456789012345678901234567890 as a decimal uint160.
-const ALICE = BigInt("0x1234567890123456789012345678901234567890").toString();
+import { ALICE } from "../src/constants";
 
 interface Scenario {
   label: string;

@@ -65,14 +65,12 @@ template GuessNumber() {
     guessLeqMax.in[1] <== maxNumber;
     guessLeqMax.out === 1;
 
-    // Generate commitment using domain-separated Poseidon hash
     component hasher = Poseidon(3);
     hasher.inputs[0] <== DOMAIN_TAG;
     hasher.inputs[1] <== number;
     hasher.inputs[2] <== salt;
     commitment <== hasher.out;
-    
-    // Check if guess matches number
+
     component eq = IsEqual();
     eq.in[0] <== guess;
     eq.in[1] <== number;

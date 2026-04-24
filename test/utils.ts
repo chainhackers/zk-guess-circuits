@@ -46,20 +46,18 @@ export async function verifyProof(
   return await groth16.verify(vKey, publicSignals, proof);
 }
 
-export async function calculateCommitment(number: number | bigint, salt: number | bigint): Promise<string> {
-  const poseidon = await buildPoseidon();
-  const F = poseidon.F;
-  const hash = poseidon([DOMAIN_TAG, number, salt]);
-  return F.toString(hash);
+// Cache the Poseidon instance — WASM init is ~200ms and this gets called many times
+// across the test suite.
+let poseidonPromise: ReturnType<typeof buildPoseidon> | null = null;
+const getPoseidon = () => (poseidonPromise ??= buildPoseidon());
+
+export async function poseidonHash(inputs: (number | bigint)[]): Promise<string> {
+  const poseidon = await getPoseidon();
+  return poseidon.F.toString(poseidon(inputs));
 }
 
-// v1 commitment (Poseidon(2) without domain separation). Retained for regression tests
-// that assert v1 commitments cannot be reused under the v2 circuit.
-export async function calculateCommitmentV1(number: number | bigint, salt: number | bigint): Promise<string> {
-  const poseidon = await buildPoseidon();
-  const F = poseidon.F;
-  const hash = poseidon([number, salt]);
-  return F.toString(hash);
+export async function calculateCommitment(number: number | bigint, salt: number | bigint): Promise<string> {
+  return poseidonHash([DOMAIN_TAG, number, salt]);
 }
 
 export function getCircuitPaths(circuitName: string) {

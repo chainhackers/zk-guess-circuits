@@ -10,3 +10,8 @@
 //     console.log((BigInt("0x"+keccak256("zkguess.v2")) % P).toString());'
 export const DOMAIN_TAG_PREIMAGE = "zkguess.v2";
 export const DOMAIN_TAG = 6000605569458108169701754207643449997818461959397281845176039583157698733685n;
+
+// Test uint160s used as fixture `guesser` values in tests and proof generators.
+// Derived from hex literals so the decimal form cannot drift from the address.
+export const ALICE = BigInt("0x1234567890123456789012345678901234567890").toString();
+export const BOB = BigInt("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").toString();
