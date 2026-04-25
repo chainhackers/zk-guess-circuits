@@ -1,26 +1,22 @@
 # zk-guess v2 ceremony — contributor steps
 
-Phase-2 multi-party trusted setup. Coordination happens in a Farcaster thread; this doc is just the run-it-once instructions.
+Phase-2 multi-party trusted setup for [zk-guess-circuits](https://github.com/chainhackers/zk-guess-circuits/). Discussion in [this Farcaster thread](https://farcaster.xyz/chainhacker/0x94a225a9).
 
 [Install snarkjs](https://github.com/iden3/snarkjs#install-snarkjs).
 
-The operator will hand you a previous `.zkey` and a ready-to-run `snarkjs zkey contribute …` line. Run it, return the new `.zkey`, paste the contribution hash that snarkjs prints into the thread.
+The operator will hand you a previous `.zkey` and a ready-to-run `snarkjs zkey contribute …` line. Run it, send the new `.zkey` back, paste the Contribution Hash into the thread.
 
-Filename convention used in the chain: `guess_NNNN_<handle>.zkey` (zero-padded index, contributor handle, e.g. `guess_0003_alice.zkey`). `guess_final.zkey` is reserved for the post-beacon output.
+Filename: `guess_NNNN_<tag>.zkey` — zero-padded index + 2–4 char handle (e.g. `guess_0001_ch.zkey`). `guess_final.zkey` is reserved for the post-beacon output.
 
 ## Returning the file
 
-Farcaster casts carry images, not arbitrary files. Upload your new `.zkey` to any public host of your choice — e.g. [0x0.st](https://0x0.st) (no account, `curl -F'file=@guess_NNNN_<handle>.zkey' https://0x0.st` returns a URL) or a release asset on your own GitHub fork. Paste the URL in your Farcaster reply alongside the Contribution Hash.
+Farcaster casts carry images, not arbitrary files. Upload your `.zkey` anywhere public — e.g. [0x0.st](https://0x0.st) (`curl -F'file=@guess_NNNN_<tag>.zkey' https://0x0.st`) or a release asset on your own [zk-guess-circuits](https://github.com/chainhackers/zk-guess-circuits/) fork — and paste the URL in your reply with the Contribution Hash.
 
 ## Example
 
-Command:
-
 ```sh
-snarkjs zkey contribute guess_0000_init.zkey guess_0001_chainhacker.zkey --name="chainhacker" -e="put high entropy text here"
+snarkjs zkey contribute guess_0000_init.zkey guess_0001_ch.zkey --name="ch" -e="put high entropy text here"
 ```
-
-Expected output:
 
 ```sh
 [INFO]  snarkJS: Circuit Hash:
@@ -34,5 +30,3 @@ Expected output:
                 31cebea3 ed6c4148 c8f91396 55349242
                 2bfe7c07 3af4adb9 6d4e204d 747af6f1
 ```
-
-The Contribution Hash is what you paste back into the Farcaster thread.
