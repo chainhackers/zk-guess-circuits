@@ -8,6 +8,10 @@ The operator will hand you a previous `.zkey` and a ready-to-run `snarkjs zkey c
 
 Filename convention used in the chain: `guess_NNNN_<handle>.zkey` (zero-padded index, contributor handle, e.g. `guess_0003_alice.zkey`). `guess_final.zkey` is reserved for the post-beacon output.
 
+## Returning the file
+
+Farcaster casts carry images, not arbitrary files. Upload your new `.zkey` to any public host of your choice — e.g. [0x0.st](https://0x0.st) (no account, `curl -F'file=@guess_NNNN_<handle>.zkey' https://0x0.st` returns a URL) or a release asset on your own GitHub fork. Paste the URL in your Farcaster reply alongside the Contribution Hash.
+
 ## Example
 
 Command:
