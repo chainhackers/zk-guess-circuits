@@ -1,6 +1,7 @@
 # zk-guess v2 ceremony — contributor steps
-
 Phase-2 multi-party trusted setup for [zk-guess-circuits](https://github.com/chainhackers/zk-guess-circuits/). Discussion in [this Farcaster thread](https://farcaster.xyz/chainhacker/0x94a225a9).
+
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/a3cac8a4-5a3c-439d-9adf-7a51bf393e38" />
 
 [Install snarkjs](https://github.com/iden3/snarkjs#install-snarkjs).
 
@@ -10,7 +11,7 @@ Filename: `guess_NNNN_<tag>.zkey` — zero-padded index + 2–4 char handle (e.g
 
 ## Returning the file
 
-Farcaster casts carry images, not arbitrary files. Upload your `.zkey` anywhere public — e.g. [temp.sh](https://temp.sh) (`curl -F'file=@guess_NNNN_<tag>.zkey' https://temp.sh/upload`, no account, 3-day retention) or a release asset on your own [zk-guess-circuits](https://github.com/chainhackers/zk-guess-circuits/) fork — and paste the URL in your reply with the Contribution Hash.
+Upload your `.zkey` anywhere public — e.g. [temp.sh](https://temp.sh) (`curl -F'file=@guess_NNNN_<tag>.zkey' https://temp.sh/upload`, no account, 3-day retention) or a release asset on your own [zk-guess-circuits](https://github.com/chainhackers/zk-guess-circuits/) fork — and paste the URL in your reply with the Contribution Hash.
 
 ## Example
 
