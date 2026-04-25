@@ -10,7 +10,7 @@ Filename: `guess_NNNN_<tag>.zkey` — zero-padded index + 2–4 char handle (e.g
 
 ## Returning the file
 
-Farcaster casts carry images, not arbitrary files. Upload your `.zkey` anywhere public — e.g. [catbox.moe](https://catbox.moe) (no account, permanent: `curl -F'reqtype=fileupload' -F'fileToUpload=@guess_NNNN_<tag>.zkey' https://catbox.moe/user/api.php`) or a release asset on your own [zk-guess-circuits](https://github.com/chainhackers/zk-guess-circuits/) fork — and paste the URL in your reply with the Contribution Hash.
+Farcaster casts carry images, not arbitrary files. Upload your `.zkey` anywhere public — e.g. [temp.sh](https://temp.sh) (`curl -F'file=@guess_NNNN_<tag>.zkey' https://temp.sh/upload`, no account, 3-day retention) or a release asset on your own [zk-guess-circuits](https://github.com/chainhackers/zk-guess-circuits/) fork — and paste the URL in your reply with the Contribution Hash.
 
 ## Example
 
