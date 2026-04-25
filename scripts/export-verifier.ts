@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 async function exportVerifier() {
   console.log("Exporting Solidity verifier...");
   
-  const zkeyPath = path.join(__dirname, "..", "generated", "guess_final.zkey");
+  const zkeyPath = path.join(__dirname, "..", "generated", "guess_dev.zkey");
   const verifierPath = path.join(__dirname, "..", "generated", "GuessVerifier.sol");
   
   try {

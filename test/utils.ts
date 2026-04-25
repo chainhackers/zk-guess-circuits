@@ -2,6 +2,7 @@ import { groth16 } from "snarkjs";
 import { buildPoseidon } from "circomlibjs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { DOMAIN_TAG } from "../src/constants";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -10,6 +11,8 @@ export interface CircuitInputs {
   salt: string;
   guess: string;
   maxNumber: string;
+  puzzleId: string;
+  guesser: string; // uint160 (Ethereum address as decimal bigint string)
 }
 
 export interface ProofResult {
@@ -43,19 +46,35 @@ export async function verifyProof(
   return await groth16.verify(vKey, publicSignals, proof);
 }
 
-export async function calculateCommitment(number: number, salt: number): Promise<string> {
-  const poseidon = await buildPoseidon();
-  const F = poseidon.F;
-  const hash = poseidon([number, salt]);
-  return F.toString(hash);
+// Cache the Poseidon instance — WASM init is ~200ms and this gets called many times
+// across the test suite.
+let poseidonPromise: ReturnType<typeof buildPoseidon> | null = null;
+const getPoseidon = () => (poseidonPromise ??= buildPoseidon());
+
+export async function poseidonHash(inputs: (number | bigint)[]): Promise<string> {
+  // Reject `number` inputs past 2^53-1 — circomlibjs would silently truncate
+  // the floating-point value before hashing, producing a wrong commitment.
+  const normalized = inputs.map((v) => {
+    if (typeof v === "bigint") return v;
+    if (!Number.isSafeInteger(v)) {
+      throw new TypeError(`poseidonHash: number inputs must be safe integers; got ${v}`);
+    }
+    return BigInt(v);
+  });
+  const poseidon = await getPoseidon();
+  return poseidon.F.toString(poseidon(normalized));
+}
+
+export async function calculateCommitment(number: number | bigint, salt: number | bigint): Promise<string> {
+  return poseidonHash([DOMAIN_TAG, number, salt]);
 }
 
 export function getCircuitPaths(circuitName: string) {
   const base = path.join(__dirname, "..", "generated");
   return {
     wasmPath: path.join(base, `${circuitName}_js`, `${circuitName}.wasm`),
-    zkeyPath: path.join(base, `${circuitName}_final.zkey`),
-    vKeyPath: path.join(base, `${circuitName}_verification_key.json`),
+    zkeyPath: path.join(base, `${circuitName}_dev.zkey`),
+    vKeyPath: path.join(base, `${circuitName}_dev_verification_key.json`),
     r1csPath: path.join(base, `${circuitName}.r1cs`),
   };
 }

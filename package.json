@@ -8,8 +8,8 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "compile": "tsx scripts/compile.ts",
-    "setup": "tsx scripts/setup.ts",
-    "build": "bun run compile && bun run setup",
+    "setup:dev": "tsx scripts/setup-dev.ts",
+    "build": "bun run compile && bun run setup:dev",
     "export-verifier": "tsx scripts/export-verifier.ts",
     "copy-to-contracts": "./scripts/copy-artifacts.sh"
   },

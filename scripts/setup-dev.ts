@@ -49,57 +49,56 @@ async function downloadPtau() {
   }
 }
 
-async function setup() {
-  console.log("Running trusted setup...");
-  
+// Dev-only Groth16 setup: single local contribution with random entropy.
+// NOT a real ceremony. Produces guess_dev.zkey + guess_dev_verification_key.json.
+// The shipping guess_final.zkey comes from the phase-2 multi-party ceremony,
+// which runs out-of-band and is not wired into this script.
+async function setupDev() {
+  console.log("Running dev trusted setup (single contributor, NOT a ceremony)...");
+
   const generatedDir = path.join(__dirname, "..", "generated");
   const r1csPath = path.join(generatedDir, "guess.r1cs");
   const ptauPath = await downloadPtau();
-  
-  // Check if r1cs exists
+
   try {
     await fs.access(r1csPath);
   } catch {
-    console.error("Error: R1CS file not found. Run 'npm run compile' first.");
+    console.error("Error: R1CS file not found. Run 'bun run compile' first.");
     process.exit(1);
   }
-  
+
   try {
-    // Generate initial zkey
     const zkey0Path = path.join(generatedDir, "guess_0000.zkey");
     console.log("Generating initial zkey...");
-    
+
     await zKey.newZKey(r1csPath, ptauPath, zkey0Path);
     console.log("✓ Initial zkey generated");
-    
-    // Add contribution (for dev)
-    const zkeyFinalPath = path.join(generatedDir, "guess_final.zkey");
-    console.log("Adding contribution...");
+
+    const zkeyDevPath = path.join(generatedDir, "guess_dev.zkey");
+    console.log("Adding dev contribution...");
 
     const entropy = crypto.randomBytes(32).toString("hex");
     await zKey.contribute(
       zkey0Path,
-      zkeyFinalPath,
+      zkeyDevPath,
       "Dev contribution",
       entropy
     );
     console.log("✓ Contribution added");
-    
-    // Export verification key
+
     console.log("Exporting verification key...");
-    const vKey = await zKey.exportVerificationKey(zkeyFinalPath);
-    
-    const vKeyPath = path.join(generatedDir, "guess_verification_key.json");
+    const vKey = await zKey.exportVerificationKey(zkeyDevPath);
+
+    const vKeyPath = path.join(generatedDir, "guess_dev_verification_key.json");
     await fs.writeFile(vKeyPath, JSON.stringify(vKey, null, 2));
     console.log("✓ Verification key exported");
-    
-    // Clean up intermediate files
+
     await fs.unlink(zkey0Path);
     console.log("✓ Cleaned up intermediate files");
-    
-    console.log("\n✅ Setup complete!");
-    console.log(`  - Final zkey: ${zkeyFinalPath}`);
-    console.log(`  - Verification key: ${vKeyPath}`);
+
+    console.log("\n✅ Dev setup complete!");
+    console.log(`  - Dev zkey: ${zkeyDevPath}`);
+    console.log(`  - Dev verification key: ${vKeyPath}`);
 
     process.exit(0);
   } catch (error) {
@@ -108,4 +107,4 @@ async function setup() {
   }
 }
 
-setup();
+setupDev();

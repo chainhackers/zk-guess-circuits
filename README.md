@@ -1,19 +1,6 @@
 # ZK Guess Circuits
 
-Zero-knowledge circuits that prove knowledge of a secret number without revealing it.
-
-## Circuit
-
-```circom
-template GuessNumber() {
-    signal input number;      // Private: secret number (1-100)
-    signal input salt;        // Private: randomness
-    signal input guess;       // Public: player's guess
-    
-    signal output commitment; // Poseidon(number, salt)
-    signal output isCorrect;  // 1 if correct, 0 if not
-}
-```
+Zero-knowledge circuits that prove knowledge of a secret number without revealing it. Source of truth: [`circuits/guess.circom`](circuits/guess.circom).
 
 ## Quick Start
 
@@ -21,7 +8,7 @@ template GuessNumber() {
 # Install dependencies
 bun install
 
-# Build everything (compile + trusted setup)
+# Build everything (compile + dev setup)
 bun run build
 
 # Run tests
@@ -31,14 +18,19 @@ bun run test
 bun run copy-to-contracts
 ```
 
+## Trusted setup
+
+`bun run build` runs a single-contributor dev setup, suitable for tests and local dev only. Production deployments use a multi-party phase-2 ceremony — see [CEREMONY.md](CEREMONY.md).
+
 ## Repository Structure
 
-This repository should be placed as a sibling to the contracts repository:
+This repository should be placed as a sibling to the contracts and frontend repos:
 
 ```
 parent-directory/
 ├── zk-guess-circuits/    # This repository
-└── zk-guess-contracts/   # Contracts repository
+├── zk-guess-contracts/   # Solidity verifier + on-chain logic
+└── zk-guess/frontend/    # Browser proof generation
 ```
 
 ## Performance
@@ -49,9 +41,10 @@ parent-directory/
 
 ## Build Artifacts
 
-- `generated/guess.wasm` - Browser proof generation
-- `generated/guess_final.zkey` - Proving key
-- `generated/GuessVerifier.sol` - Solidity verifier
+- `generated/guess.wasm` — browser proof generation
+- `generated/guess_dev.zkey` — dev proving key (single-contributor; not for production)
+- `generated/guess_final.zkey` — ceremony proving key (produced by phase-2 ceremony, see [CEREMONY.md](CEREMONY.md))
+- `generated/GuessVerifier.sol` — Solidity verifier
 
 ## License
 
