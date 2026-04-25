@@ -52,8 +52,17 @@ let poseidonPromise: ReturnType<typeof buildPoseidon> | null = null;
 const getPoseidon = () => (poseidonPromise ??= buildPoseidon());
 
 export async function poseidonHash(inputs: (number | bigint)[]): Promise<string> {
+  // Reject `number` inputs past 2^53-1 — circomlibjs would silently truncate
+  // the floating-point value before hashing, producing a wrong commitment.
+  const normalized = inputs.map((v) => {
+    if (typeof v === "bigint") return v;
+    if (!Number.isSafeInteger(v)) {
+      throw new TypeError(`poseidonHash: number inputs must be safe integers; got ${v}`);
+    }
+    return BigInt(v);
+  });
   const poseidon = await getPoseidon();
-  return poseidon.F.toString(poseidon(inputs));
+  return poseidon.F.toString(poseidon(normalized));
 }
 
 export async function calculateCommitment(number: number | bigint, salt: number | bigint): Promise<string> {
